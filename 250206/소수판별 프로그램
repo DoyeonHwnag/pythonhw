@@ -7,6 +7,9 @@ def check_prime_num(x):
 number = input('판별할자연수를입력하세요:')
 if number.isdigit(): 
     number = int(number)
-    print(check_prime_num(number))
+    if number == 0:
+        print("0입니다")
+    else:    
+        print(check_prime_num(number))
 else:
     print("유효한숫자를 입력해주세요")
