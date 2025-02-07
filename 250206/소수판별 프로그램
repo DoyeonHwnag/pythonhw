@@ -2,7 +2,11 @@ def check_prime_num(x):
     for i in range(2, x):
         if x % i == 0:
             return False
-        return True
+    return True
 
-number = int(input('판별할자연수를입력하세요:'))
-print(check_prime_num(number))
+number = input('판별할자연수를입력하세요:')
+if number.isdigit(): 
+    number = int(number)
+    print(check_prime_num(number))
+else:
+    print("유효한숫자를 입력해주세요")
