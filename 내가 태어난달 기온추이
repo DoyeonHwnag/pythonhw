@@ -1,0 +1,33 @@
+import pandas as pd
+
+# CSV 파일 읽기
+df = pd.read_csv('남원 날씨.csv', encoding='cp949', on_bad_lines='skip')
+
+
+# 데이터 정보 출력
+df.info()
+
+# 결측값 처리 및 컬럼명 변경
+df2 = df.fillna(method='ffill').rename(columns={
+    '평균기온(℃)': 'avg_temp',
+    '최저기온(℃)': 'min_temp',
+    '최고기온(℃)': 'max_temp'
+})
+
+
+df2 = df.fillna(method='ffill')
+df2.rename(columns={'최저기온(℃)':'min_temp'}, inplace=True)
+df2.rename(columns={'평균기온(℃)':'avg_temp'}, inplace=True)
+df2.rename(columns={'최고기온(℃)':'max_temp'}, inplace=True)
+
+import matplotlib.pyplot as plt
+plt.rcParams['axes.unicode_minus'] = False
+plt.title('1999 05 namwon')
+plt.plot(range(1,len(df)+1), df2['max_temp'], label='MAX', c='r')
+plt.plot(range(1,len(df)+1), df2['avg_temp'], label='AVG', c='y')
+plt.plot(range(1,len(df)+1), df2['min_temp'], label='MIN', c='b')
+plt.xlabel('day')
+plt.ylabel('tmp')
+plt.legend()
+plt.show()
+plt.savefig('남원기온.png')
