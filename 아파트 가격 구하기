@@ -1,0 +1,19 @@
+import pandas as pd
+import matplotlib.pylab as plt
+from statsmodels.formula.api import ols
+from sklearn.linear_model import LinearRegression
+price = [174000, 156500, 168000, 145000, 100000, 139500, 160500, 150000, 130000, 120000, 100500, 100000, 103000, 100000, 120000, 110000, 200000, 150000, 160000, 190000, 107000,]
+size = [152, 118, 118, 85, 59, 128, 128, 115, 115, 115, 115, 115, 115, 115, 115, 115, 115, 115, 115, 115, 115]
+age = [19, 19, 19, 19,11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11]
+kindergarten = [22, 22, 22, 22,4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 30, 4, 20, 22, 4]
+elementarySchool = [10, 10, 10, 10, 12, 12, 12, 12, 12, 12, 12, 13, 12, 12, 11, 12, 12, 12, 12, 12, 12]
+busStop = [13, 13, 13, 13, 29, 29, 15, 29, 29, 13, 29, 29, 29, 11, 29, 24, 29, 29, 25, 29, 13]
+hospital = [19, 19, 19, 19, 14, 14, 14, 17, 14, 14, 14, 18, 14, 14, 14, 18, 14, 24, 15, 14, 14]
+mart = [19, 19, 19, 19, 14, 15, 14, 14, 14, 14, 14, 14, 15, 14, 17, 14, 14, 14, 14, 14, 14]
+
+data = {'price': price, 'size': size, 'age': age, 'kindergarten':
+kindergarten, 'elementarySchool': elementarySchool, 'busStop': busStop,
+'hospital': hospital, 'mart': mart}
+df = pd.DataFrame(data)
+fit = ols('price ~ size + age + kindergarten + elementarySchool + busStop + hospital + mart', data=df).fit()
+print(fit.summary( ))
