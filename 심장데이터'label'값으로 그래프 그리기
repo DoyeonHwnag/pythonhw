@@ -1,2 +1,0 @@
-import matplotlib.pyplot as plt
-plt.hist(df_heart.label, bins=4)
