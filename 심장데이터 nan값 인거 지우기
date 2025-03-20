@@ -1,4 +1,0 @@
-import numpy as np
-df_heart.replace('?', np.nan, inplace=True)
-df_heart=df_heart.dropna()
-df_heart
