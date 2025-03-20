@@ -1,0 +1,78 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import yfinance as yf
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense, LSTM, Dropout
+
+cel = yf.download('051910.ks', start='2021-11-01', end='2024-12-31')
+df_cel = pd.DataFrame(cel['Close'])
+df_cel = df_cel.reset_index()
+df_cel.columns = ['date', 'value']
+df_cel['date'] = pd.to_datetime(df_cel['date'])
+df_cel.set_index('date', inplace=True)
+df_cel.reset_index()
+dataset_cel = df_cel.values
+
+# 데이터 분할하기
+train_size = int(0.8 * len(dataset_cel))
+df_cel_train = dataset_cel[:train_size, :]
+df_cel_test = dataset_cel[train_size:, :]
+
+# 데이터 스케일링하기
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler(feature_range=(0, 1))
+scaled_data = scaler.fit_transform(dataset_cel)
+
+# 리스트로 초기화
+x_train_data, y_train_data = [], []
+
+# 28일을 기준으로 데이터 생성하기
+for i in range(28, len(df_cel_train)):
+    x_train_data.append(scaled_data[i - 28:i, 0])
+    y_train_data.append(scaled_data[i, 0])
+
+# NumPy 배열로 변환
+x_train_data, y_train_data = np.array(x_train_data), np.array(y_train_data)
+x_train_data = np.reshape(x_train_data, (x_train_data.shape[0], x_train_data.shape[1], 1))
+
+lstm_cel = Sequential()
+lstm_cel.add(LSTM(units=28, return_sequences=True, input_shape=(x_train_data.shape[1], 1)))
+lstm_cel.add(LSTM(units=28))
+lstm_cel.add(Dense(1))
+
+# 데이터 재가공하기
+inputs_data = df_cel[len(df_cel) - len(df_cel_test) - 28:].values
+inputs_data = inputs_data.reshape(-1, 1)
+inputs_data = scaler.transform(inputs_data)
+
+# 모형의 학습 방법 설정하여 학습 진행하기
+lstm_cel.compile(loss='mean_squared_error', optimizer='adam')
+lstm_cel.fit(x_train_data, y_train_data, epochs=100, batch_size=1, verbose=2)
+
+X_test = []
+for i in range(28, inputs_data.shape[0]):
+    X_test.append(inputs_data[i - 28:i, 0])
+X_test = np.array(X_test)
+X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
+predicted_value = lstm_cel.predict(X_test)
+predicted_value = scaler.inverse_transform(predicted_value)
+
+# 시각화를 위한 데이터 분리 및 예측 결과 할당
+df_cel_train_vis = cel[:train_size]
+df_cel_test_vis = cel[train_size:]
+
+df_cel_test_vis = df_cel_test_vis[:len(predicted_value)]  # 예측 결과 길이 조정
+
+df_cel_test_vis['Predictions'] = predicted_value
+
+# 시각화
+plt.figure(figsize=(12, 6))
+plt.plot(df_cel_train_vis["Close"], label='Train')
+plt.plot(df_cel_test_vis["Close"], label='Test')
+plt.plot(df_cel_test_vis["Predictions"], label='Predictions')
+plt.title('Celltrion Stock Price Prediction')
+plt.xlabel('Date')
+plt.ylabel('Price')
+plt.legend()
+plt.show()
