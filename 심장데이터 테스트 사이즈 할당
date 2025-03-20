@@ -1,7 +1,0 @@
-from sklearn.model_selection import train_test_split
-train, test = train_test_split(df_heart, test_size=0.3, random_state=0, 
-stratify=df_heart['label'])
-train_X = train[train.columns[:13]]
-train_Y = train[train.columns[13:]]
-test_X = test[test.columns[:13]]
-test_Y = test[test.columns[13:]]
