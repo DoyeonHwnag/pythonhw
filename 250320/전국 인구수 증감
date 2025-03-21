@@ -35,7 +35,7 @@ for i in range(0, len(df)):
 #x축에 표시할 값
 x_values = [ ]
 for i in range(1, 7):
-    yyyymm = '20240' + str(i)
+    yyyymm = '20220' + str(i)
     x_values.append(yyyymm)
 #월 증감 인구수를 지역별 변수 y에 대입하기
 y_seoul = popDiff[0][108:114]
